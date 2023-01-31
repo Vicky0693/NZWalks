@@ -15,9 +15,50 @@ namespace NZWalks.API.Repository
             this.nZWalksDbContext = nZWalksDbContext;
         }
 
+        public async Task<WalkDifficulty> AddAsync(WalkDifficulty walkDifficulty)
+        {
+            walkDifficulty.Id= Guid.NewGuid();
+            await nZWalksDbContext.WalkDifficulty.AddAsync(walkDifficulty);
+            await nZWalksDbContext.SaveChangesAsync();
+            return walkDifficulty;
+
+
+        }
+
+        public async Task<WalkDifficulty> DeleteAsync(Guid id)
+        {
+            var existingwalkDifficulty = await nZWalksDbContext.WalkDifficulty.FindAsync(id);
+            if (existingwalkDifficulty == null)
+            {
+                nZWalksDbContext.WalkDifficulty.Remove(existingwalkDifficulty);
+                await nZWalksDbContext.SaveChangesAsync();
+                return existingwalkDifficulty;
+            }
+            return null;
+        }
+
         public  async Task<IEnumerable<WalkDifficulty>> GetAllasync()
         {
             return await nZWalksDbContext.WalkDifficulty.ToListAsync();
+        }
+
+        public async Task<WalkDifficulty> GetAsync(Guid Id)
+        {
+            return await nZWalksDbContext.WalkDifficulty.FirstOrDefaultAsync(x => x.Id == Id);
+
+        }
+
+        public async Task<WalkDifficulty> UpdateAsync(Guid id, WalkDifficulty walkDifficulty)
+        {
+            var existingWalkDifficulty = await nZWalksDbContext.WalkDifficulty.FindAsync(id);
+            if (existingWalkDifficulty == null)
+            {
+                return null;
+            }
+            existingWalkDifficulty.Code = walkDifficulty.Code;
+            await nZWalksDbContext.SaveChangesAsync();
+            return existingWalkDifficulty;
+
         }
     }
 }
